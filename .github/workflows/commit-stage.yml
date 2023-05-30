@@ -32,5 +32,7 @@ jobs:
           sarif_file: ${{steps.scan.outputs.sarif}}
       - name: Build, unit tests and integration tests
         run: |
+          # Modifications Copyright 2023 ZhongShiang, project dictionary setting is different
+          cd chapter02/catalog-service
           chmod +x gradlew
           ./gradlew build
