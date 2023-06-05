@@ -1,0 +1,4 @@
+spring:
+  datasource:
+    # Modification 20230605 zhongshiang, "///" reference: https://www.testcontainers.org/modules/databases/jdbc/
+    url: jdbc:tc:postgresql:14.4:///
