@@ -17,7 +17,6 @@ jobs:
         project: [
           chapter02/catalog-service,
           chapter05/catalog-service,
-          chapter05/catalog-service-jpa,
           chapter05/config-service,
           chapter07/catalog-service,
           chapter07/config-service,
