@@ -1,1 +1,41 @@
+name: Commit Stage
+on:
+  push:
+  schedule: # Every Monday
+    - cron: '0 0 * * 1'
 
+jobs:
+  build:
+    name: Build and Test ${{ matrix.project }}
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [
+          Chapter02/catalog-service,
+          Chapter05/catalog-service,
+          Chapter05/catalog-service-jpa,
+          Chapter05/config-service,
+          Chapter07/catalog-service,
+          Chapter07/config-service,
+          Chapter08/catalog-service,
+          Chapter08/config-service,
+          Chapter08/order-service
+        ]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+      - name: Build, unit tests and integration tests
+        run: |
+          cd ${{ matrix.project }}
+          chmod +x gradlew
+          ./gradlew build
