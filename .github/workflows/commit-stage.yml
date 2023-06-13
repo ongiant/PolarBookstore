@@ -15,15 +15,15 @@ jobs:
       fail-fast: false
       matrix:
         project: [
-          Chapter02/catalog-service,
-          Chapter05/catalog-service,
-          Chapter05/catalog-service-jpa,
-          Chapter05/config-service,
-          Chapter07/catalog-service,
-          Chapter07/config-service,
-          Chapter08/catalog-service,
-          Chapter08/config-service,
-          Chapter08/order-service
+          chapter02/catalog-service,
+          chapter05/catalog-service,
+          chapter05/catalog-service-jpa,
+          chapter05/config-service,
+          chapter07/catalog-service,
+          chapter07/config-service,
+          chapter08/catalog-service,
+          chapter08/config-service,
+          chapter08/order-service
         ]
     steps:
       - name: Checkout repository
