@@ -11,28 +11,29 @@ import reactor.test.StepVerifier;
 
 import java.io.IOException;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @TestMethodOrder(MethodOrderer.Random.class)
 class BookClientTests {
     private MockWebServer mockWebServer;
     private BookClient bookClient;
 
+    String baseUrl;
+
     @BeforeEach
-    void setup() throws IOException{
+    void setup() throws IOException {
         this.mockWebServer = new MockWebServer();
         this.mockWebServer.start();
-        var webClient = WebClient.builder().baseUrl(mockWebServer.url("/").uri().toString()).build();
+        baseUrl = mockWebServer.url("/").uri().toString();
+        var webClient = WebClient.builder().baseUrl(baseUrl).build();
         this.bookClient = new BookClient(webClient);
     }
 
     @AfterEach
-    void clean() throws IOException{
+    void clean() throws IOException {
         this.mockWebServer.shutdown();
     }
 
     @Test
-    void whenBookExistsThenReturnBook() throws InterruptedException {
+    void whenBookExistsThenReturnBook() {
         var bookIsbn = "1234567890";
 
         var mockResponse = new MockResponse()
@@ -40,7 +41,7 @@ class BookClientTests {
             .setBody("""
                 {
                     "isbn": %s,
-                    "title: "Title",
+                    "title": "Title",
                     "author": "Author",
                     "price": 9.90,
                     "publisher": "Polarsophia"
