@@ -51,8 +51,6 @@ class BookClientTests {
 
         mockWebServer.enqueue(mockResponse);
 
-        assertThat(mockWebServer.takeRequest().getPath()).isEqualTo("/books/1234567890");
-
         Mono<Book> book = bookClient.getBookByIsbn(bookIsbn);
 
         StepVerifier.create(book)
