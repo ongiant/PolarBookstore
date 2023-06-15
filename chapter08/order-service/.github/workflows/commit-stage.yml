@@ -1,5 +1,6 @@
 name: Commit Stage
-on: push
+run-name: ${{github.actor}} is running order-service github action
+on: [push]
 
 env:
   REGISTRY: ghcr.io
@@ -14,60 +15,65 @@ jobs:
       contents: read
       security-events: write
     steps:
+      # reference: https://github.com/actions/checkout
       - name: Checkout source code
         uses: actions/checkout@v3
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          distribution: temurin
-          java-version: 17
-          cache: gradle
+          java-version: '17'
+          distribution: 'temurin'
+          # reference: https://github.com/marketplace/actions/setup-java-jdk
+          cache: 'gradle'
       - name: Build, unit tests and integration tests
+        # reference: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
         run: |
           chmod +x gradlew
           ./gradlew build
+      # reference: https://github.com/anchore/scan-action
       - name: Code vulnerability scanning
         uses: anchore/scan-action@v3
         id: scan
         with:
-          path: "${{ github.workspace }}"
+          path: "${{github.workspace}}"
           fail-build: false
           severity-cutoff: high
       - name: Upload vulnerability report
         uses: github/codeql-action/upload-sarif@v2
+        # reference: https://stackoverflow.com/questions/58858429/how-to-run-a-github-actions-step-even-if-the-previous-step-fails-while-still-f
         if: success() || failure()
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
-      - name: Validate Kubernetes manifests
+      - name: Validate kubernetes manifests
         uses: stefanprodan/kube-tools@v1
         with:
-          kubectl: 1.24.3
-          kubeval: 0.16.1
+          kubectl: 1.26.3
+          kubeconform: 0.6.1
           command: |
-            kubeval --strict -d k8s
+            kubeconform --strict k8s
   package:
     name: Package and Publish
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == refs/heads/master }}
     needs: [ build ]
     runs-on: ubuntu-22.04
     permissions:
       contents: read
-      packages: write
       security-events: write
+      packages: write
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          distribution: temurin
-          java-version: 17
-          cache: gradle
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
       - name: Build container image
         run: |
           chmod +x gradlew
           ./gradlew bootBuildImage \
-            --imageName ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
+          --imageName ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.VERSION }}
       - name: OCI image vulnerability scanning
         uses: anchore/scan-action@v3
         id: scan
@@ -80,6 +86,8 @@ jobs:
         if: success() || failure()
         with:
           sarif_file: ${{ steps.scan.outputs.sarif }}
+
+      # reference: https://github.com/docker/login-action
       - name: Log into container registry
         uses: docker/login-action@v2
         with:

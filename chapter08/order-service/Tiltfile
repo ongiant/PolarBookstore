@@ -1,0 +1,17 @@
+# Build
+custom_build(
+    # Name of container image
+    ref = 'order-service',
+
+    # Command to build the container image, more: https://docs.tilt.dev/custom_build.html#how-to-write-your-own
+    command = './gradlew bootBuildImage --imageName $EXPECTED_REF',
+
+    # Files to watch that trigger a new build
+    deps = ['build.gradle', 'src']
+)
+
+# Deploy
+k8s_yaml(['k8s/deployment.yml', 'k8s/service.yml'])
+
+# Manage; here order-service is k8s Service, more: https://docs.tilt.dev/tiltfile_concepts.html#resources
+k8s_resource('order-service', port_forwards=['9002'])
