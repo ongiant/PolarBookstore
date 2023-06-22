@@ -63,6 +63,12 @@ spring:
               maxBackOff: 500ms
               factor: 2
               basedOnPreviousValue: false
+        - SaveSession
+  session:
+    store-type: redis
+    timeout: 10m
+    redis:
+      namespace: polar:edge
 
 # for more: https://docs.spring.io/spring-cloud-circuitbreaker/docs/2.1.7/reference/html/#circuit-breaker-properties-configuration
 # here should be resilience.cuicuitbreaker in previous spirng official document, YML syntax: https://docs.spring.io/spring-boot/docs/1.1.0.M1/reference/html/boot-features-external-config.html#boot-features-external-config-yaml
