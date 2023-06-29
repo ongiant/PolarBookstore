@@ -9,6 +9,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
+// https://docs.spring.io/spring-boot/docs/3.0.8/reference/html/features.html#features.testing.spring-boot-applications.with-running-server
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 class EdgeServiceApplicationTests {

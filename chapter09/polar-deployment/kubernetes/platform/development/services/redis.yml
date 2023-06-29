@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: polar-redis
+  labels:
+    db: polar-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      db: polar-redis
+  template:
+    metadata:
+      name: polar-redis
+      labels:
+        db: polar-redis
+    spec:
+      containers:
+        - name: polar-redis
+          image: redis:7.0
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              # for more detail: https://stackoverflow.com/questions/42326645/kubernetes-understanding-cpu-resources-limits
+              cpu: 100m
+              memory: 50Mi
+            limits:
+              cpu: 200m
+              # Mi vs M, see: https://stackoverflow.com/questions/50804915/kubernetes-size-definitions-whats-the-difference-of-gi-and-g
+              memory: 100Mi
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: polar-redis
+  labels:
+    db: polar-redis
+spec:
+  type: ClusterIP
+  selector:
+    db: polar-redis
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379

@@ -25,6 +25,8 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-reactor-resilience4j'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
     implementation 'org.springframework.session:spring-session-data-redis'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+
     testImplementation 'org.testcontainers:junit-jupiter'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
@@ -36,6 +38,21 @@ dependencyManagement {
     }
 }
 
+bootBuildImage {
+    imageName = "${project.name}"
+    environment = ["BP_JVM_VERSION":"17.*"]
+
+    // for more, see: https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/#build-image.examples.publish
+    docker {
+        // docker.publishRegistry : https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/#build-image.docker-registry
+        publishRegistry{
+            // gradle project property: https://docs.gradle.org/current/userguide/build_environment.html#sec:project_properties
+            username = project.findProperty("registryUsername")
+            password = project.findProperty("registryToken")
+            url = project.findProperty("registryUrl")
+        }
+    }
+}
 tasks.named('test') {
     useJUnitPlatform()
 }
