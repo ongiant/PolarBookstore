@@ -17,19 +17,39 @@ repositories {
 
 ext {
     set('springCloudVersion', "2021.0.8")
+    set('testcontainersVersion', "1.17.3")
+    set('awaitilityVersion', "4.2.0")
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.springframework.cloud:spring-cloud-function-context'
+    implementation 'org.springframework.cloud:spring-cloud-stream-binder-rabbit'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
+
+    /*
+      Reference Document:
+        1. https://docs.spring.io/spring-cloud-stream/docs/4.0.0-SNAPSHOT/reference/html/spring-cloud-stream.html#_test_binder_configuration
+        2. https://maven.apache.org/repositories/artifacts.html
+     */
+    testImplementation("org.springframework.cloud:spring-cloud-stream") {
+        artifact {
+            name = "spring-cloud-stream"
+            extension = "jar"
+            type = "test-jar"
+            classifier = "test-binder"
+        }
+    }
+
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:rabbitmq'
+    testImplementation "org.awaitility:awaitility:${awaitilityVersion}"
 }
 
 dependencyManagement {
     imports {
         mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
     }
 }
 
