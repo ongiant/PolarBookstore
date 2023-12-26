@@ -19,7 +19,7 @@ import org.springframework.security.web.server.csrf.CookieServerCsrfTokenReposit
 import org.springframework.security.web.server.csrf.CsrfToken;
 import org.springframework.web.server.WebFilter;
 
-@EnableWebFluxSecurity
+@EnableWebFluxSecurity // why use this annotation? and why this whole project is reactive?
 public class SecurityConfig {
 
 	@Bean

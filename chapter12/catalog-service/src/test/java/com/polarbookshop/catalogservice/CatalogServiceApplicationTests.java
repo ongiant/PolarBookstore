@@ -49,6 +49,7 @@ class CatalogServiceApplicationTests {
         WebClient webClient = WebClient.builder()
             // url refer official docs: https://www.keycloak.org/docs/latest/securing_apps/#token-endpoint
             .baseUrl(keycloakContainer.getAuthServerUrl() + "/realms/PolarBookshop/protocol/openid-connect/token")
+            // about header: https://datatracker.ietf.org/doc/html/rfc6749#section-4.3.2
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
             .build();
 
