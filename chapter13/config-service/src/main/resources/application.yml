@@ -22,3 +22,15 @@ spring:
           timeout: 5
           clone-on-start: true
           force-pull: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+      probes:
+        enabled: true
