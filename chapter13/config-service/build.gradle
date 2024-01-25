@@ -16,11 +16,16 @@ repositories {
 
 ext {
     set('springCloudVersion', "2021.0.8")
+    set('otelVersion', "1.32.0")
 }
 
 dependencies {
     implementation 'org.springframework.cloud:spring-cloud-config-server'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+    runtimeOnly "io.opentelemetry.javaagent:opentelemetry-javaagent:${otelVersion}"
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
@@ -30,11 +35,15 @@ dependencyManagement {
     }
 }
 
+springBoot {
+    buildInfo()
+}
+
 bootBuildImage {
 	builder = "docker.io/paketobuildpacks/builder-jammy-base"
     imageName = "${project.name}"
-    environment = ["BP_JVM_VERSION": "17.*"]
-    bindings = ["${project.projectDir}/paketo-buildpacks/binaries:/binaries"]
+    environment = [ "BP_JVM_VERSION": "17", "SERVICE_BINDING_ROOT": "/bindings" ]
+    bindings = [ "${project.projectDir}/../../paketo-buildpacks/binding_tool-x86_64-unknown-linux-gnu/bindings:/bindings" ]
 
     docker {
         publishRegistry {

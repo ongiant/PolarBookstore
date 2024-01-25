@@ -16,6 +16,7 @@ repositories {
 
 ext {
 	set('springCloudVersion', "2021.0.8")
+	set('otelVersion', "1.32.0")
 }
 
 dependencies {
@@ -26,6 +27,9 @@ dependencies {
 	implementation 'org.springframework.retry:spring-retry'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+	runtimeOnly "io.opentelemetry.javaagent:opentelemetry-javaagent:${otelVersion}"
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
@@ -45,10 +49,15 @@ dependencyManagement {
 	}
 }
 
+springBoot {
+	buildInfo()
+}
+
 bootBuildImage {
 	builder = "docker.io/paketobuildpacks/builder-jammy-base"
 	imageName = "${project.name}"
-	environment = ["BP_JVM_VERSION": "17"]
+	environment = ["BP_JVM_VERSION": "17.*", "SERVICE_BINDING_ROOT": "/bindings"]
+	bindings = [ "${project.projectDir}/../../paketo-buildpacks/binding_tool-x86_64-unknown-linux-gnu/bindings:/bindings" ]
 
 	docker {
 		publishRegistry {

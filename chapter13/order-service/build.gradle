@@ -24,6 +24,7 @@ ext {
 	set('springCloudVersion', "2021.0.8")
 	set('testcontainersVersion', "1.19.3")
 	set('testKeycloakVersion', "3.2.0")
+	set('otelVersion', "1.32.0")
 }
 
 dependencies {
@@ -40,6 +41,8 @@ dependencies {
 	runtimeOnly 'org.postgresql:postgresql'
 	runtimeOnly 'org.postgresql:r2dbc-postgresql'
 	runtimeOnly 'org.springframework:spring-jdbc'
+	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+	runtimeOnly "io.opentelemetry.javaagent:opentelemetry-javaagent:${otelVersion}"
 
 	// Only on Apple Silicon. Why it's necessary: https://github.com/netty/netty/issues/11020
 	// runtimeOnly 'io.netty:netty-resolver-dns-native-macos:4.1.101.Final:osx-aarch_64'
@@ -71,10 +74,15 @@ dependencyManagement {
 	}
 }
 
+springBoot {
+	buildInfo()
+}
+
 bootBuildImage {
 	builder = "docker.io/paketobuildpacks/builder-jammy-base"
 	imageName = "${project.name}"
-	environment = ["BP_JVM_VERSION": "17"]
+	environment = [ "BP_JVM_VERSION": "17.*", "SERVICE_BINDING_ROOT": "/bindings" ]
+	bindings = [ "${project.projectDir}/../../paketo-buildpacks/binding_tool-x86_64-unknown-linux-gnu/bindings:/bindings" ]
 
 	docker {
 		publishRegistry {

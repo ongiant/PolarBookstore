@@ -39,6 +39,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
 	runtimeOnly 'org.postgresql:postgresql'
+	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+	runtimeOnly "io.opentelemetry.javaagent:opentelemetry-javaagent:${otelVersion}"
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 	
 
@@ -57,6 +59,10 @@ dependencyManagement {
 	}
 }
 
+springBoot {
+	buildInfo()
+}
+
 bootRun {
 	systemProperty 'spring.profiles.active', 'testdata'
 }
@@ -64,7 +70,8 @@ bootRun {
 bootBuildImage {
 	builder = "docker.io/paketobuildpacks/builder-jammy-base"
 	imageName = "${project.name}"
-	environment = ["BP_JVM_VERSION": "17"]
+	environment = [ "BP_JVM_VERSION": "17.*", "SERVICE_BINDING_ROOT": "/bindings" ]
+	bindings = [ "${project.projectDir}/../../paketo-buildpacks/binding_tool-x86_64-unknown-linux-gnu/bindings:/bindings" ]
 
 	docker {
 		publishRegistry {
